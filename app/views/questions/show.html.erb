@@ -1,0 +1,46 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Pregunta:</strong>
+  <%= @question.pregunta %>
+</p>
+
+<h2>Responses</h2>
+<% @question.responses.each do |response| %>
+<p>
+  <strong>Id:</strong>
+  <%= response.id %>
+</p>
+  <p>
+    <strong>Respuesta:</strong>
+    <%= response.respuesta %>
+  </p>
+
+  <p>
+    <strong>Cantidad:</strong>
+    <%= response.cantidad %>
+  </p>
+<p>
+  <%= link_to 'Destroy Comment', [response.question, response],
+               method: :delete,
+               data: { confirm: 'Are you sure?' } %>
+</p>
+<% end %>
+
+<h2>Add a Response:</h2>
+<%= form_for([@question, @question.responses.build]) do |f| %>
+  <p>
+    <%= f.label :respuesta %><br>
+    <%= f.text_field :respuesta %>
+  </p>
+  <p>
+    <%= f.label :cantidad %><br>
+    <%= f.text_field :cantidad %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+
+<%= link_to 'Edit', edit_question_path(@question) %> |
+<%= link_to 'Back', questions_path %>

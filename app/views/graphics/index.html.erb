@@ -1,0 +1,131 @@
+<html>
+<head>
+  <!--Load the AJAX API-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+  // Load the Visualization API and the corechart package.
+  google.charts.load('current', {'packages':['corechart']});
+
+  // Set a callback to run when the Google Visualization API is loaded.
+  google.charts.setOnLoadCallback(drawChart);
+
+  // Callback that creates and populates a data table,
+  // instantiates the pie chart, passes in the data and
+  // draws it.
+  //var respuestas = [];
+  //var cantidad = [];
+  //var data =  [<%= raw @respuestas.to_json %>];
+  //for (var i = 0; i < data.length; i++) {
+    //for (var j = 0; j < data[i].length; j++) {
+      //respuestas[j] = data[i][j].respuesta;
+      //cantidad[j] = data[i][j].cantidad;
+    //}
+  //}
+
+  Preguntas = new Object();
+  Ids = new Array();
+  Pregunta='';
+  Preguntas.pregunta=new Array();
+  cont=0;
+  <% cont=0 %>
+  <% @questions.each do |question| %>
+  Preguntas.pregunta[<%= cont %>]=new Object();
+  Preguntas.pregunta[<%= cont %>].pregunta='<%= raw question.pregunta %>';
+  <% conta=0; %>
+  Preguntas.pregunta[<%= cont %>].respuestas=new Array();
+  <% question.responses.each do |response| %>
+  Preguntas.pregunta[<%= cont %>].respuestas[<%= conta %>]=new Object();
+  Preguntas.pregunta[<%= cont %>].respuestas[<%= conta %>].respuesta='<%= raw response.respuesta %>';
+  Preguntas.pregunta[<%= cont %>].respuestas[<%= conta %>].cantidad='<%= raw response.cantidad %>';
+  <% conta=conta+1 %>
+  <% end %>
+  <% cont=cont+1 %>
+  cont= <%= cont %>;
+  <% end %>
+
+  function drawChart() {
+
+        // Create the data table.
+        var add="";
+        var cantresp=0;
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Slices');
+
+        var Preg="";
+        for (var j = 0; j < Preguntas.pregunta.length; j++) {
+          Preg = Preguntas.pregunta[j].pregunta;
+          Pregunta=Preg;
+          data.addRows(Preguntas.pregunta[j].respuestas.length);
+          cantresp = Preguntas.pregunta[j].respuestas.length;
+          for (var k = 0; k < Preguntas.pregunta[j].respuestas.length; k++) {
+            Ids[k]=  Preguntas.pregunta[j].respuestas[k].respuesta;
+            data.setCell(k, 0, Preguntas.pregunta[j].respuestas[k].respuesta);
+            data.setCell(k, 1, Preguntas.pregunta[j].respuestas[k].cantidad);
+            add+=" "+Preguntas.pregunta[j].respuestas[k].respuesta+": <input class='resultados' id='"+k+"' value= '"+Preguntas.pregunta[j].respuestas[k].cantidad+"'>";
+          }
+
+
+    // Set chart options
+    var options = {'title':Preg,
+    'width':530,
+    'height':300};
+
+    // Instantiate and draw our chart, passing in some options.
+    $('body').append('<center>'+add+"<input class='resultados' type='button' onclick='drawChartHot();' value='Actualizar'>"+'<div id=chart_div_'+j+'></div></center>');
+    var chart = new google.visualization.PieChart(document.getElementById('chart_div_'+j));
+    chart.draw(data, options);
+
+  }
+}
+
+
+function drawChartHot() {
+
+        // Create the data table.
+        var cantresp=0;
+        var data = new google.visualization.DataTable();
+        data.addRows(Ids.length);
+        debugger;
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Slices');
+        for (var k = 0; k < Ids.length; k++) {
+          data.setCell(k, 0, Ids[k]);
+          data.setCell(k, 1, $('#'+k).val());
+        }
+        var options = {'title':Pregunta,
+        'width':530,
+        'height':300};
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div_'+0));
+        chart.draw(data, options);
+
+
+      }
+    </script>
+  </head>
+
+  <body>
+
+    <!--Div that will hold the pie chart-->
+    <ul class="pagination">
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/1">1</a></li>
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/3">2</a></li>
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/4">3</a></li>
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/5">4</a></li>
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/6">5</a></li>
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/7">6</a></li>
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/8">7</a></li>
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/9">8</a></li>
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/10">9</a></li>
+  <li><a onclick="Redir(this);" href="http://localhost:3000/graphics/11">10</a></li>
+
+
+    </ul>
+  </body>
+  <script>
+ function Redir(element) {
+  window.location.href=$(element).attr('href');
+ }
+  </script>
+  </html>
